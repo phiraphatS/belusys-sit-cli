@@ -48,5 +48,7 @@ To learn React, check out the [React documentation](https://reactjs.org/).
 ## ENV file
 Create ".env" and add this config (for local only)
 
+```bash
 NODE_ENV='development'
 REACT_APP_API_URL='http://localhost:5001'
+```
