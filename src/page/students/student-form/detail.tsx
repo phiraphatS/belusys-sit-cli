@@ -240,7 +240,7 @@ export default function StudentDetailComponent() {
                     name="birthDate"
                     wrapperCol={{ span: 4 }}
                     rules={[{ required: true, message: 'กรุณาใส่วันเกิด' }]}>
-                    <DatePicker {...readOnlyObj} format={'DD/MM/YYYY'} />
+                    <DatePicker {...readOnlyObj} format={'DD/MM/YYYY'} style={{ width: '100%'}} />
                 </Form.Item>
 
                 { (typeOfComponent === 'create' || typeOfComponent === 'edit') && (

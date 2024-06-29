@@ -293,6 +293,30 @@ export default function HomeFormComponent() {
         });
     }
 
+    const addStudentToClassroom = (studentId: string) => {
+        classroomService.addStudentToClassroom({ studentId: studentId, classroomId: key }).then(res => {
+            if (res.status) {
+                Modal.success({
+                    title: 'Success',
+                    content: 'Add student to classroom successfully',
+                    centered: true,
+                    afterClose: () => {
+                        fetchStudentsInClassRoom();
+                        fetchStudentsNotInClassRoom();
+                    }
+                });
+            } else {
+                throw new Error(res.message);
+            }
+        }).catch(err => {
+            Modal.error({
+                title: 'Error',
+                content: err.message,
+                centered: true,
+            });
+        });
+    }
+
     const columnsStudentInClassroom: TableProps<DataType>['columns'] = [
         ...columns,
         {
@@ -301,6 +325,7 @@ export default function HomeFormComponent() {
             render: (_, record) => (
                 <Button 
                     danger 
+                    disabled={['create', 'view'].includes(typeOfComponent) ? true : false}
                     shape="circle" 
                     type='primary' 
                     icon={<DeleteOutlined />} 
@@ -317,32 +342,11 @@ export default function HomeFormComponent() {
             key: 'action',
             render: (_, record) => (
                 <Button 
+                disabled={['create', 'view'].includes(typeOfComponent) ? true : false}
                     shape="circle" 
                     type='primary' 
                     icon={<PlusOutlined />} 
-                    onClick={() => {
-                        classroomService.addStudentToClassroom({ studentId: record.key, classroomId: key }).then(res => {
-                            if (res.status) {
-                                Modal.success({
-                                    title: 'Success',
-                                    content: 'Add student to classroom successfully',
-                                    centered: true,
-                                    afterClose: () => {
-                                        fetchStudentsInClassRoom();
-                                        fetchStudentsNotInClassRoom();
-                                    }
-                                });
-                            } else {
-                                throw new Error(res.message);
-                            }
-                        }).catch(err => {
-                            Modal.error({
-                                title: 'Error',
-                                content: err.message,
-                                centered: true,
-                            });
-                        });
-                    }}
+                    onClick={() => addStudentToClassroom(record.key)}
                 />
             ),
         }
@@ -453,7 +457,7 @@ export default function HomeFormComponent() {
                     name="academicYear"
                     wrapperCol={{ span: 4 }}
                     rules={[{ required: true, message: 'กรุณาใส่ปีการศึกษา' }]}>
-                    <DatePicker {...readOnlyObj} picker="year" format={'YYYY'} />
+                    <DatePicker {...readOnlyObj} picker="year" format={'YYYY'} style={{ width: '100%'}} />
                 </Form.Item>
 
                 <Form.Item

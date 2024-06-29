@@ -28,8 +28,7 @@ type ProjLayoutProps = {
 
 const ProjLayout: React.FC<ProjLayoutProps> = ({ children }) => {
     const location = useLocation();
-    const currentPath = location.pathname.slice(1);
-    const selectedKey = items.find((item) => item.label.toLowerCase() === currentPath)?.key;
+    const selectedKey = items.find((item) => location.pathname.includes(item.label.toLowerCase()))?.key;
     const navigate = useNavigate();
 
     const { token: { colorBgContainer, borderRadiusLG } } = theme.useToken();
@@ -82,11 +81,6 @@ const ProjLayout: React.FC<ProjLayoutProps> = ({ children }) => {
             </Header>
             <Content style={{ padding: '0 48px' }}>
                 { BreadcrumbEl }
-                {/* <Breadcrumb style={{ margin: '16px 0' }}>
-                    <Breadcrumb.Item>Home</Breadcrumb.Item>
-                    <Breadcrumb.Item>List</Breadcrumb.Item>
-                    <Breadcrumb.Item>App</Breadcrumb.Item>
-                </Breadcrumb> */}
                 <div
                     style={{
                         background: colorBgContainer,
@@ -99,7 +93,7 @@ const ProjLayout: React.FC<ProjLayoutProps> = ({ children }) => {
                 </div>
             </Content>
             <Footer style={{ textAlign: 'center' }}>
-                {/* Ant Design ©{new Date().getFullYear()} Created by Ant UED */}
+                ©{new Date().getFullYear()} Created by Sue
             </Footer>
         </Layout>
     );
