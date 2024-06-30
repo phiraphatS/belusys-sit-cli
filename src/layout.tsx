@@ -4,11 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const { Header, Content, Footer } = Layout;
 
-// const items = new Array(15).fill(null).map((_, index) => ({
-//     key: index + 1,
-//     label: `nav ${index + 1}`,
-// }));
-
 const items = [
     {
         key: '1',

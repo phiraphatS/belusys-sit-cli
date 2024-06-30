@@ -10,6 +10,7 @@ export const classroomService = {
     getStudentNotInClassroom,
     removeStudentFromClassroom,
     addStudentToClassroom,
+    getMaleStudentRawQuery,
 }
 
 async function classroomList(params: any) {
@@ -137,6 +138,20 @@ async function removeStudentFromClassroom(params: any) {
     };
 
     const urlEnpoint = `${process.env.REACT_APP_API_URL}/api/classroom/remove-student/${params.studentId}/${params.classroomId}`;
+    return fetch(urlEnpoint, requestOptions)
+        .then(response => serviceFunction.handleResponse(response))
+        .then(res => {
+            return res;
+        })
+}
+
+async function getMaleStudentRawQuery() {
+    const requestOptions = {
+        method: 'GET',
+        headers: serviceFunction.headersOption(),
+    };
+
+    const urlEnpoint = `${process.env.REACT_APP_API_URL}/api/classroom/get-male-student-raw-query`;
     return fetch(urlEnpoint, requestOptions)
         .then(response => serviceFunction.handleResponse(response))
         .then(res => {

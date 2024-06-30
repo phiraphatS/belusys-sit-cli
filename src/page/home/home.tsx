@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { classroomService } from '../../services/classroom.service'
 import { useNavigate } from 'react-router-dom';
 import type { TableProps, MenuProps } from 'antd';
-import { Button, Divider, Dropdown, Flex, Form, Input, Modal, Space, Table } from 'antd';
+import { Button, Divider, Dropdown, Flex, Form, Input, Modal, Space, Table, Typography } from 'antd';
 import LoadingComponent from '../../shared-components/loading-and-skeletons/loading';
 import MySelectComponent from '../../shared-components/form/my-select';
 import { DeleteOutlined, FormOutlined, InfoCircleOutlined, MoreOutlined } from '@ant-design/icons';
@@ -44,10 +44,22 @@ interface DataType {
   homeroomTeacher: string;
   action: string;
 }
+interface DataType2 {
+  key: string;
+  fullname: string;
+  levelname: number;
+  birthdate: string;
+  gendername: string;
+  classname: string;
+  homeroom_teacher: string;
+}
+
+const { Title } = Typography;
 
 export default function Home() {
   const navigate = useNavigate();
   const [classRooms, setClassRooms] = useState([]);
+  const [rawQueryDataList, setRawQueryDataList] = useState<DataType2[]>([]);
   const [loading, setLoading] = useState(true);
   const [limit, setLimit] = useState(5);
   const [total, setTotal] = useState(0);
@@ -91,6 +103,25 @@ export default function Home() {
       setTotal(0);
     }
   }, [page, limit])
+
+  useEffect(() => {
+    classroomService.getMaleStudentRawQuery().then(res => {
+      if (res.status) {
+        setRawQueryDataList(res.data);
+      } else {
+        throw new Error(res.message);
+      }
+    }).catch(err => {
+      Modal.error({
+        title: 'Error',
+        content: err.message,
+        centered: true,
+        afterClose: () => {
+          setRawQueryDataList([]);
+        }
+      })
+    });
+  }, [])
 
   const onPageSizeChange = (value: string | number) => {
     if (typeof value === 'string') {
@@ -184,6 +215,51 @@ export default function Home() {
     },
   ]
 
+  const columns2: TableProps<DataType2>['columns'] = [
+    {
+      title: 'รหัสนักเรียน',
+      dataIndex: 'key',
+      key: 'key',
+    },
+    {
+      title: 'ชื่อ-สกุล',
+      dataIndex: 'fullname',
+      key: 'fullName',
+    },
+    {
+      title: 'ระดับชั้น',
+      dataIndex: 'levelname',
+      key: 'levelName',
+    },
+    {
+      title: 'วัน/เดือน/ปีเกิด',
+      dataIndex: 'birthdate',
+      key: 'birthDate',
+      render: (text) => {
+        return new Date(text).toLocaleDateString('th-TH', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+      }
+    },
+    {
+      title: 'เพศ',
+      dataIndex: 'gendername',
+      key: 'gendername'
+    },
+    {
+      title: 'ชื่อห้องเรียน',
+      dataIndex: 'classname',
+      key: 'classname',
+    },
+    {
+      title: 'ครูประจำชั้น',
+      dataIndex: 'homeroom_teacher',
+      key: 'homeroom_teacher',
+    },
+  ]
+
   const renderContent = useMemo(() => {
     if (loading) {
       return <LoadingComponent size='large' />
@@ -206,6 +282,17 @@ export default function Home() {
       } />
     }
   }, [classRooms, loading, page, limit, total])
+
+  const renderRawQueryData = useMemo(() => {
+    if (rawQueryDataList.length <= 0) {
+      return <div>
+        <h1> No results </h1>
+        <p>There
+          are no students in the database.</p>
+      </div>
+    }
+    return <Table columns={columns2} dataSource={rawQueryDataList} pagination={false}/>
+  }, [rawQueryDataList])
 
   return (
     <>
@@ -253,6 +340,10 @@ export default function Home() {
         </Flex>
 
         {renderContent}
+        <Divider />
+        <Title level={4}> Raw query --- See script in endpoint service </Title>
+
+        {renderRawQueryData}
       </Space>
     </>
   )
